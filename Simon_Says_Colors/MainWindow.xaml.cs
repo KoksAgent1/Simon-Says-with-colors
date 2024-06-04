@@ -1,0 +1,222 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
+
+namespace Simon_Says_Colors
+{
+    /// <summary>
+    /// Interaktionslogik für MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+
+        private List<Button> colorButtons;
+        private List<Color> originalColors;
+        private List<Color> darkColors;
+        private List<Color> lightColors;
+        private List<int> sequence;
+        private List<int> userSequence;
+        private Random random;
+        private DispatcherTimer timer;
+        private int displayIndex;
+        private int currentScore;
+        private int highScore;
+        private bool gamerunning;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            colorButtons = new List<Button> { RedButton, YellowButton, GreenButton, BlueButton };
+            originalColors = new List<Color> { Colors.Red, Colors.Yellow, Colors.Green, Colors.Blue };
+            darkColors = new List<Color> { Colors.Crimson, Colors.Goldenrod, Colors.DarkGreen, Colors.DarkBlue };
+            lightColors = new List<Color> { Colors.DarkSalmon, Colors.PaleGoldenrod, Colors.LightGreen, Colors.LightBlue };
+            sequence = new List<int>();
+            userSequence = new List<int>();
+            random = new Random();
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(0.5);
+            timer.Tick += Timer_Tick;
+            currentScore = 0;
+            highScore = 0;
+            ApplyDarkMode();
+            gamerunning = false;
+
+        }
+
+        private void DarkModeCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ApplyLightMode();
+        }
+
+        private void DarkModeCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ApplyDarkMode();
+        }
+
+        private void ApplyLightMode()
+        {
+            var lightMode = new ResourceDictionary { Source = new Uri("pack://application:,,,/LightMode.xaml") };
+            Application.Current.Resources.MergedDictionaries.Clear();
+            Application.Current.Resources.MergedDictionaries.Add(lightMode);
+        }
+
+        private void ApplyDarkMode()
+        {
+            var darkMode = new ResourceDictionary { Source = new Uri("pack://application:,,,/DarkMode.xaml") };
+            Application.Current.Resources.MergedDictionaries.Clear();
+            Application.Current.Resources.MergedDictionaries.Add(darkMode);
+        }
+
+
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            sequence.Clear();
+            userSequence.Clear();
+            currentScore = 0;
+            UpdateScores();
+            AddToSequence();
+            gamerunning = true;
+            if ((bool)FullSequenceRadioButton.IsChecked)
+            {
+                await DisplayFullSequence();
+            }
+            else
+            {
+                await DisplayLatestOnly();
+            }
+        }
+
+
+        private void AddToSequence()
+        {
+            int nextColorIndex = random.Next(colorButtons.Count);
+            sequence.Add(nextColorIndex);
+        }
+
+
+        private async Task DisplayFullSequence()
+        {
+            StatusTextBlock.Text = "Schau dir die Sequenz an!";
+            displayIndex = 0;
+
+            while (displayIndex < sequence.Count)
+            {
+                int colorIndex = sequence[displayIndex];
+                Button colorButton = colorButtons[colorIndex];
+                ChangeButtonColor(colorButton, colorIndex, true);
+                await Task.Delay(500);
+                ChangeButtonColor(colorButton, colorIndex, false);
+                await Task.Delay(500);
+
+                displayIndex++;
+            }
+
+            StatusTextBlock.Text = "Du bist dran";
+        }
+
+        private async Task DisplayLatestOnly()
+        {
+            StatusTextBlock.Text = "Dieses Feld wurde hinzugefügt";
+            int colorIndex = sequence[sequence.Count - 1];
+            Button colorButton = colorButtons[colorIndex];
+            ChangeButtonColor(colorButton, colorIndex, true);
+            await Task.Delay(500);
+            ChangeButtonColor(colorButton, colorIndex, false);
+            await Task.Delay(500);
+
+            StatusTextBlock.Text = "Du bist dran";
+        }
+
+        private void ChangeButtonColor(Button button, int index, bool isActive)
+        {
+            if (isActive)
+            {
+                if ((bool)LightRadioButton.IsChecked)
+                {
+                    button.Background = new SolidColorBrush(lightColors[index]);
+                }
+                else
+                {
+                    button.Background = new SolidColorBrush(darkColors[index]);
+                }
+            }
+            else
+            {
+                button.Background = new SolidColorBrush(originalColors[index]);
+            }
+        }
+
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (displayIndex < sequence.Count)
+            {
+                int colorIndex = sequence[displayIndex];
+                Button colorButton = colorButtons[colorIndex];
+                colorButton.Background = new SolidColorBrush(darkColors[colorIndex]);
+                Dispatcher.InvokeAsync(() =>
+                {
+                    System.Threading.Thread.Sleep(300);
+                    colorButton.Background = new SolidColorBrush(originalColors[colorIndex]);
+                });
+                displayIndex++;
+            }
+            else
+            {
+                timer.Stop();
+                StatusTextBlock.Text = "Du bist dran";
+            }
+        }
+
+
+        private void ColorButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!gamerunning)
+                return;
+            Button clickedButton = sender as Button;
+            int clickedIndex = colorButtons.IndexOf(clickedButton);
+            userSequence.Add(clickedIndex);
+
+            if (userSequence[userSequence.Count - 1] != sequence[userSequence.Count - 1])
+            {
+                StatusTextBlock.Text = "Game Over!";
+                if (currentScore > highScore)
+                {
+                    highScore = currentScore;
+                    UpdateScores();
+                }
+
+                gamerunning = false;
+                return;
+            }
+
+            if (userSequence.Count == sequence.Count)
+            {
+                userSequence.Clear();
+                StatusTextBlock.Text = "Correct! Next round.";
+                currentScore++;
+                UpdateScores();
+                AddToSequence();
+                if ((bool)FullSequenceRadioButton.IsChecked)
+                {
+                    DisplayFullSequence();
+                }
+                else
+                {
+                    DisplayLatestOnly();
+                }
+            }
+        }
+
+        private void UpdateScores()
+        {
+            CurrentScoreTextBlock.Text = currentScore.ToString();
+            HighScoreTextBlock.Text = highScore.ToString();
+        }
+
+    }
+}
