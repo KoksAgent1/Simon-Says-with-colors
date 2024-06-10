@@ -36,7 +36,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="471" Width="196">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="471" Width="215">
             <Button Name="StartButton" Content="Start" Click="StartButton_Click" Width="100" Margin="5"
                     Background="{DynamicResource ButtonBackgroundColor}" Foreground="{DynamicResource ButtonForegroundColor}"/>
             <TextBlock Text="Highscore:" Margin="5" Foreground="{DynamicResource TextColor}"/>
@@ -47,8 +47,8 @@
             <TextBlock Text="Einstellungen" FontWeight="Bold" Foreground="{DynamicResource TextColor}"/>
             <StackPanel Margin="5">
                 <TextBlock Text="Farbeffekt:" Margin="5" Foreground="{DynamicResource TextColor}"/>
-                <RadioButton Name="LightRadioButton" Content="Hell" GroupName="ColorEffect" IsChecked="True" Margin="5" Foreground="{DynamicResource TextColor}"/>
-                <RadioButton Name="DarkRadioButton" Content="Dunkel" GroupName="ColorEffect" Margin="5" Foreground="{DynamicResource TextColor}"/>
+                <RadioButton Name="LightRadioButton" Content="Hell" GroupName="ColorEffect" Margin="5" Foreground="{DynamicResource TextColor}"/>
+                <RadioButton Name="DarkRadioButton" Content="Dunkel" GroupName="ColorEffect" IsChecked="True" Margin="5" Foreground="{DynamicResource TextColor}"/>
             </StackPanel>
             <StackPanel Margin="5">
                 <TextBlock Text="Sequenzanzeige:" Margin="5" Foreground="{DynamicResource TextColor}"/>
@@ -61,14 +61,14 @@
             <StackPanel Margin="5">
                 <TextBlock Text="Schwierigkeitsgrad:" Margin="5" Foreground="{DynamicResource TextColor}"/>
                 <ComboBox Name="DifficultyComboBox" Margin="5" Foreground="{DynamicResource TextColor}">
-                    <ComboBoxItem Content="Einfach" IsSelected="True"/>
-                    <ComboBoxItem Content="Mittel"/>
-                    <ComboBoxItem Content="Schwer"/>
+                    <ComboBoxItem Content="Einfach" IsSelected="True" />
+                    <ComboBoxItem Content="Mittel" />
+                    <ComboBoxItem Content="Schwer" />
                 </ComboBox>
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+        <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="329" Width="368">
             <TextBlock Name="StatusTextBlockMaskup" HorizontalAlignment="Center" Margin="5" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextColor}"/>
             <Grid Height="298" Width="367">
                 <Grid.RowDefinitions>
@@ -80,10 +80,10 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Name="RedButton" Style="{StaticResource NoHoverButtonStyle}" Background="Red" Click="ColorButton_Click" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
-                <Button Name="YellowButton" Style="{StaticResource NoHoverButtonStyle}" Background="Yellow" Click="ColorButton_Click" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
-                <Button Name="GreenButton" Style="{StaticResource NoHoverButtonStyle}" Background="Green" Click="ColorButton_Click" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
-                <Button Name="BlueButton" Style="{StaticResource NoHoverButtonStyle}" Background="Blue" Click="ColorButton_Click" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+                <Button Name="RedButton" Style="{StaticResource NoHoverButtonStyle}" Background="#FF0000" Click="ColorButton_Click" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+                <Button Name="YellowButton" Style="{StaticResource NoHoverButtonStyle}" Background="#FFFF00" Click="ColorButton_Click" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+                <Button Name="GreenButton" Style="{StaticResource NoHoverButtonStyle}" Background="#008000" Click="ColorButton_Click" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+                <Button Name="BlueButton" Style="{StaticResource NoHoverButtonStyle}" Background="#0000FF" Click="ColorButton_Click" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
             </Grid>
         </StackPanel>
     </Grid>

@@ -4,4 +4,107 @@
     <SolidColorBrush x:Key="TextColor" Color="White"/>
     <SolidColorBrush x:Key="ButtonBackgroundColor" Color="#555555"/>
     <SolidColorBrush x:Key="ButtonForegroundColor" Color="White"/>
+
+    <!-- ComboBox Style for Dark Mode -->
+    <Style TargetType="ComboBox">
+        <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+        <Setter Property="Background" Value="{StaticResource ButtonBackgroundColor}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ButtonForegroundColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="4,3"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton Name="ToggleButton" 
+                                      Grid.Column="2"
+                                      IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                      Focusable="false" 
+                                      ClickMode="Press"
+                                      Background="{StaticResource ButtonBackgroundColor}"
+                                      Foreground="{StaticResource TextColor}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      BorderBrush="{TemplateBinding BorderBrush}">
+                            <Grid>
+                                <ContentPresenter HorizontalAlignment="Left" 
+                                                  Margin="0,0,0,0" 
+                                                  VerticalAlignment="Center" 
+                                                  Content="{TemplateBinding SelectionBoxItem}" 
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
+                            </Grid>
+                        </ToggleButton>
+                        <Popup Name="Popup" 
+                               Placement="Bottom" 
+                               IsOpen="{TemplateBinding IsDropDownOpen}" 
+                               AllowsTransparency="True" 
+                               Focusable="False" 
+                               PopupAnimation="Slide">
+                            <Grid Name="DropDown" 
+                                  SnapsToDevicePixels="True" 
+                                  MinWidth="{TemplateBinding ActualWidth}" 
+                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border Name="DropDownBorder" 
+                                        Background="{StaticResource WindowBackgroundColor}" 
+                                        BorderBrush="{StaticResource ButtonForegroundColor}" 
+                                        BorderThickness="1"/>
+                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True" 
+                                                KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{StaticResource TextColor}"/>
+                        </Trigger>
+                        <Trigger Property="IsDropDownOpen" Value="true">
+                            <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{StaticResource TextColor}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ComboBoxItem Style for Dark Mode -->
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+        <Setter Property="Background" Value="{StaticResource WindowBackgroundColor}"/>
+        <Setter Property="Padding" Value="5,3"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border Name="Border" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{StaticResource ButtonForegroundColor}" 
+                            BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Left" 
+                                          VerticalAlignment="Center" 
+                                          Content="{TemplateBinding Content}" 
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="true">
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource ButtonBackgroundColor}"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource TextColor}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource ButtonBackgroundColor}"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource TextColor}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

@@ -26,7 +26,9 @@ namespace Simon_Says_Colors
         private int displayIndex;
         private int currentScore;
         private int highScore;
+        private int round;
         private bool gamerunning;
+        private bool gameover;
 
         public MainWindow()
         {
@@ -61,6 +63,7 @@ namespace Simon_Says_Colors
             timer.Tick += Timer_Tick;
             currentScore = 0;
             highScore = 0;
+            round = 0;
             ApplyDarkMode();
             gamerunning = false;
 
@@ -115,6 +118,7 @@ namespace Simon_Says_Colors
             sequence.Clear();
             userSequence.Clear();
             currentScore = 0;
+            round = 1;
             UpdateScores();
             AddToSequence();
             gamerunning = true;
@@ -138,8 +142,16 @@ namespace Simon_Says_Colors
 
         private async Task DisplayFullSequence()
         {
-            StatusTextBlock.Text = "Korrekt. Schau dir die Sequenz an!";
-            StatusTextBlockMaskup.Text = "Korrekt. Schau dir die Sequenz an!";
+            if(round == 1)
+            {
+                StatusTextBlock.Text = "Schau dir die Sequenz an!";
+                StatusTextBlockMaskup.Text = "Schau dir die Sequenz an!";
+            }
+            else
+            {
+                StatusTextBlock.Text = "Korrekt. Schau dir die Sequenz an!";
+                StatusTextBlockMaskup.Text = "Korrekt. Schau dir die Sequenz an!";
+            }
             displayIndex = 0;
 
             while (displayIndex < sequence.Count)
@@ -147,9 +159,9 @@ namespace Simon_Says_Colors
                 int colorIndex = sequence[displayIndex];
                 Button colorButton = colorButtons[colorIndex];
                 ChangeButtonColor(colorButton, colorIndex, true);
-                await Task.Delay(500);
+                await Task.Delay(timer.Interval);
                 ChangeButtonColor(colorButton, colorIndex, false);
-                await Task.Delay(500);
+                await Task.Delay(timer.Interval);
 
                 displayIndex++;
             }
@@ -210,13 +222,16 @@ namespace Simon_Says_Colors
             else
             {
                 timer.Stop();
-                StatusTextBlock.Text = "Du bist dran";
-                StatusTextBlockMaskup.Text = "Du bist dran";
+                if (gamerunning)
+                {
+                    StatusTextBlock.Text = "Du bist dran";
+                    StatusTextBlockMaskup.Text = "Du bist dran";
+                }
             }
         }
 
 
-        private void ColorButton_Click(object sender, RoutedEventArgs e)
+        private async void ColorButton_Click(object sender, RoutedEventArgs e)
         {
             if (!gamerunning)
             {
@@ -228,7 +243,7 @@ namespace Simon_Says_Colors
 
             // Klick-Feedback-Animation
             var originalColor = ((SolidColorBrush)clickedButton.Background).Color;
-            var highlightColor = Colors.White;
+            var highlightColor = ((bool)LightRadioButton.IsChecked) ? lightColors[clickedIndex].Color : darkColors[clickedIndex].Color;
 
             var animation = new ColorAnimation
             {
@@ -246,8 +261,8 @@ namespace Simon_Says_Colors
 
             if (userSequence[userSequence.Count - 1] != sequence[userSequence.Count - 1])
             {
-                StatusTextBlock.Text = "Game Over!";
-                StatusTextBlockMaskup.Text = "Game Over!";
+                gamerunning = false;
+                await DisplayCompleteSequenceOnGameOver(); // Zeige die gesamte korrekte Sequenz
                 if (currentScore > highScore)
                 {
                     highScore = currentScore;
@@ -272,6 +287,22 @@ namespace Simon_Says_Colors
                     DisplayLatestOnly();
                 }
             }
+        }
+
+        private async Task DisplayCompleteSequenceOnGameOver()
+        {
+            StatusTextBlock.Text = "Game Over!";
+            StatusTextBlockMaskup.Text = "Game Over! Das war die Korrekte Abfolge";
+            foreach (var colorIndex in sequence)
+            {
+                Button colorButton = colorButtons[colorIndex];
+                ChangeButtonColor(colorButton, colorIndex, true);
+                await Task.Delay(timer.Interval);
+                ChangeButtonColor(colorButton, colorIndex, false);
+                await Task.Delay(timer.Interval);
+            }
+            StatusTextBlock.Text = "Game Over!";
+            StatusTextBlockMaskup.Text = "Game Over!";
         }
 
         private void UpdateScores()
