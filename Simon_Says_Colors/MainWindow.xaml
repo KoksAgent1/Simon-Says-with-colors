@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simon_Says_Colors"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="520" Width="800">
     <Window.Resources>
         <!-- Stile für die Buttons ohne Hover-Effekt -->
         <Style TargetType="Button" x:Key="NoHoverButtonStyle">
@@ -30,13 +30,13 @@
         </Style>
     </Window.Style>
 
-    <Grid Background="{DynamicResource WindowBackgroundColor}">
+    <Grid Background="{DynamicResource WindowBackgroundColor}" Margin="0,0,0,5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="235"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="392" Width="196">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="471" Width="196">
             <Button Name="StartButton" Content="Start" Click="StartButton_Click" Width="100" Margin="5"
                     Background="{DynamicResource ButtonBackgroundColor}" Foreground="{DynamicResource ButtonForegroundColor}"/>
             <TextBlock Text="Highscore:" Margin="5" Foreground="{DynamicResource TextColor}"/>
@@ -44,7 +44,7 @@
             <TextBlock Text="Aktueller Score:" Margin="5" Foreground="{DynamicResource TextColor}"/>
             <TextBlock Name="CurrentScoreTextBlock" Text="0" Margin="5" Foreground="{DynamicResource TextColor}"/>
             <TextBlock Name="StatusTextBlock" HorizontalAlignment="Left" Margin="5" Foreground="{DynamicResource TextColor}"/>
-            <TextBlock Text="Einstellungen" FontWeight="Bold" Margin="5" Foreground="{DynamicResource TextColor}"/>
+            <TextBlock Text="Einstellungen" FontWeight="Bold" Foreground="{DynamicResource TextColor}"/>
             <StackPanel Margin="5">
                 <TextBlock Text="Farbeffekt:" Margin="5" Foreground="{DynamicResource TextColor}"/>
                 <RadioButton Name="LightRadioButton" Content="Hell" GroupName="ColorEffect" IsChecked="True" Margin="5" Foreground="{DynamicResource TextColor}"/>
@@ -58,13 +58,33 @@
             <StackPanel Margin="5">
                 <CheckBox Name="DarkModeCheckBox" Content="Light Mode" Checked="DarkModeCheckBox_Checked" Unchecked="DarkModeCheckBox_Unchecked" Margin="5" Foreground="{DynamicResource TextColor}"/>
             </StackPanel>
+            <StackPanel Margin="5">
+                <TextBlock Text="Schwierigkeitsgrad:" Margin="5" Foreground="{DynamicResource TextColor}"/>
+                <ComboBox Name="DifficultyComboBox" Margin="5" Foreground="{DynamicResource TextColor}">
+                    <ComboBoxItem Content="Einfach" IsSelected="True"/>
+                    <ComboBoxItem Content="Mittel"/>
+                    <ComboBoxItem Content="Schwer"/>
+                </ComboBox>
+            </StackPanel>
         </StackPanel>
 
-        <WrapPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="85" Width="340">
-            <Button Name="RedButton" Style="{StaticResource NoHoverButtonStyle}" Background="Red" Click="ColorButton_Click"/>
-            <Button Name="YellowButton" Style="{StaticResource NoHoverButtonStyle}" Background="Yellow" Click="ColorButton_Click"/>
-            <Button Name="GreenButton" Style="{StaticResource NoHoverButtonStyle}" Background="Green" Click="ColorButton_Click"/>
-            <Button Name="BlueButton" Style="{StaticResource NoHoverButtonStyle}" Background="Blue" Click="ColorButton_Click"/>
-        </WrapPanel>
+        <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+            <TextBlock Name="StatusTextBlockMaskup" HorizontalAlignment="Center" Margin="5" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextColor}"/>
+            <Grid Height="298" Width="367">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Name="RedButton" Style="{StaticResource NoHoverButtonStyle}" Background="Red" Click="ColorButton_Click" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+                <Button Name="YellowButton" Style="{StaticResource NoHoverButtonStyle}" Background="Yellow" Click="ColorButton_Click" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+                <Button Name="GreenButton" Style="{StaticResource NoHoverButtonStyle}" Background="Green" Click="ColorButton_Click" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+                <Button Name="BlueButton" Style="{StaticResource NoHoverButtonStyle}" Background="Blue" Click="ColorButton_Click" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN"/>
+            </Grid>
+        </StackPanel>
     </Grid>
 </Window>

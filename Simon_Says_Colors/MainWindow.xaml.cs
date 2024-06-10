@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace Simon_Says_Colors
@@ -15,9 +16,9 @@ namespace Simon_Says_Colors
     {
 
         private List<Button> colorButtons;
-        private List<Color> originalColors;
-        private List<Color> darkColors;
-        private List<Color> lightColors;
+        private List<SolidColorBrush> originalColors;
+        private List<SolidColorBrush> darkColors;
+        private List<SolidColorBrush> lightColors;
         private List<int> sequence;
         private List<int> userSequence;
         private Random random;
@@ -31,9 +32,27 @@ namespace Simon_Says_Colors
         {
             InitializeComponent();
             colorButtons = new List<Button> { RedButton, YellowButton, GreenButton, BlueButton };
-            originalColors = new List<Color> { Colors.Red, Colors.Yellow, Colors.Green, Colors.Blue };
-            darkColors = new List<Color> { Colors.Crimson, Colors.Goldenrod, Colors.DarkGreen, Colors.DarkBlue };
-            lightColors = new List<Color> { Colors.DarkSalmon, Colors.PaleGoldenrod, Colors.LightGreen, Colors.LightBlue };
+            originalColors = new List<SolidColorBrush>
+            {
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF0000")), // Red
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFF00")), // Yellow
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#008000")), // Green
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0000FF"))  // Blue
+            };
+            darkColors = new List<SolidColorBrush>
+            {
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#8B0000")), // Dark Red
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#9B870C")), // Dark Yellow
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#006400")), // Dark Green
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00008B"))  // Dark Blue
+            };
+            lightColors = new List<SolidColorBrush>
+            {
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFA07A")), // Light Red
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFFE0")), // Light Yellow
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#90EE90")), // Light Green
+                new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ADD8E6"))  // Light Blue
+            };
             sequence = new List<int>();
             userSequence = new List<int>();
             random = new Random();
@@ -71,9 +90,28 @@ namespace Simon_Says_Colors
             Application.Current.Resources.MergedDictionaries.Add(darkMode);
         }
 
+        private void SetDifficulty()
+        {
+            var selectedDifficulty = (DifficultyComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            switch (selectedDifficulty)
+            {
+                case "Einfach":
+                    timer.Interval = TimeSpan.FromSeconds(1);
+                    break;
+                case "Mittel":
+                    timer.Interval = TimeSpan.FromSeconds(0.5);
+                    break;
+                case "Schwer":
+                    timer.Interval = TimeSpan.FromSeconds(0.25);
+                    break;
+            }
+        }
+
+
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            SetDifficulty();
             sequence.Clear();
             userSequence.Clear();
             currentScore = 0;
@@ -100,7 +138,8 @@ namespace Simon_Says_Colors
 
         private async Task DisplayFullSequence()
         {
-            StatusTextBlock.Text = "Schau dir die Sequenz an!";
+            StatusTextBlock.Text = "Korrekt. Schau dir die Sequenz an!";
+            StatusTextBlockMaskup.Text = "Korrekt. Schau dir die Sequenz an!";
             displayIndex = 0;
 
             while (displayIndex < sequence.Count)
@@ -116,11 +155,13 @@ namespace Simon_Says_Colors
             }
 
             StatusTextBlock.Text = "Du bist dran";
+            StatusTextBlockMaskup.Text = "Du bist dran";
         }
 
         private async Task DisplayLatestOnly()
         {
             StatusTextBlock.Text = "Dieses Feld wurde hinzugefügt";
+            StatusTextBlockMaskup.Text = "Dieses Feld wurde hinzugefügt";
             int colorIndex = sequence[sequence.Count - 1];
             Button colorButton = colorButtons[colorIndex];
             ChangeButtonColor(colorButton, colorIndex, true);
@@ -129,6 +170,7 @@ namespace Simon_Says_Colors
             await Task.Delay(500);
 
             StatusTextBlock.Text = "Du bist dran";
+            StatusTextBlockMaskup.Text = "Du bist dran";
         }
 
         private void ChangeButtonColor(Button button, int index, bool isActive)
@@ -137,16 +179,16 @@ namespace Simon_Says_Colors
             {
                 if ((bool)LightRadioButton.IsChecked)
                 {
-                    button.Background = new SolidColorBrush(lightColors[index]);
+                    button.Background = lightColors[index];
                 }
                 else
                 {
-                    button.Background = new SolidColorBrush(darkColors[index]);
+                    button.Background = darkColors[index];
                 }
             }
             else
             {
-                button.Background = new SolidColorBrush(originalColors[index]);
+                button.Background = originalColors[index];
             }
         }
 
@@ -157,11 +199,11 @@ namespace Simon_Says_Colors
             {
                 int colorIndex = sequence[displayIndex];
                 Button colorButton = colorButtons[colorIndex];
-                colorButton.Background = new SolidColorBrush(darkColors[colorIndex]);
+                colorButton.Background = darkColors[colorIndex];
                 Dispatcher.InvokeAsync(() =>
                 {
                     System.Threading.Thread.Sleep(300);
-                    colorButton.Background = new SolidColorBrush(originalColors[colorIndex]);
+                    colorButton.Background = originalColors[colorIndex];
                 });
                 displayIndex++;
             }
@@ -169,6 +211,7 @@ namespace Simon_Says_Colors
             {
                 timer.Stop();
                 StatusTextBlock.Text = "Du bist dran";
+                StatusTextBlockMaskup.Text = "Du bist dran";
             }
         }
 
@@ -176,28 +219,47 @@ namespace Simon_Says_Colors
         private void ColorButton_Click(object sender, RoutedEventArgs e)
         {
             if (!gamerunning)
+            {
                 return;
+            }
             Button clickedButton = sender as Button;
             int clickedIndex = colorButtons.IndexOf(clickedButton);
             userSequence.Add(clickedIndex);
 
+            // Klick-Feedback-Animation
+            var originalColor = ((SolidColorBrush)clickedButton.Background).Color;
+            var highlightColor = Colors.White;
+
+            var animation = new ColorAnimation
+            {
+                From = originalColor,
+                To = highlightColor,
+                Duration = TimeSpan.FromSeconds(0.1),
+                AutoReverse = true
+            };
+
+            var storyboard = new Storyboard();
+            storyboard.Children.Add(animation);
+            Storyboard.SetTarget(animation, clickedButton);
+            Storyboard.SetTargetProperty(animation, new PropertyPath("(Button.Background).(SolidColorBrush.Color)"));
+            storyboard.Begin();
+
             if (userSequence[userSequence.Count - 1] != sequence[userSequence.Count - 1])
             {
                 StatusTextBlock.Text = "Game Over!";
+                StatusTextBlockMaskup.Text = "Game Over!";
                 if (currentScore > highScore)
                 {
                     highScore = currentScore;
                     UpdateScores();
                 }
-
-                gamerunning = false;
                 return;
             }
 
             if (userSequence.Count == sequence.Count)
             {
                 userSequence.Clear();
-                StatusTextBlock.Text = "Correct! Next round.";
+                StatusTextBlock.Text = "";
                 currentScore++;
                 UpdateScores();
                 AddToSequence();
