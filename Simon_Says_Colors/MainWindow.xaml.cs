@@ -114,6 +114,7 @@ namespace Simon_Says_Colors
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            if(gamerunning) return;
             SetDifficulty();
             sequence.Clear();
             userSequence.Clear();

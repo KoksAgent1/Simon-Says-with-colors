@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simon_Says_Colors"
         mc:Ignorable="d"
-        Title="MainWindow" Height="520" Width="800">
+        Title="Simon Says" Height="520" Width="800">
     <Window.Resources>
         <!-- Stile für die Buttons ohne Hover-Effekt -->
         <Style TargetType="Button" x:Key="NoHoverButtonStyle">
